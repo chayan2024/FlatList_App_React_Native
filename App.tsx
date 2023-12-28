@@ -1,6 +1,7 @@
 // App.js
 import React, { useState } from 'react';
-import { View, FlatList, Text, Image, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, FlatList, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { Card, Image, Text, Button } from 'react-native-elements';
 
 const groceryProducts = [
   { id: '1', name: 'Apples', category: 'Fruits', image: require('./assets/apple.jpg'), price: 2.99, rating: 4.5 },
@@ -15,26 +16,27 @@ const App = () => {
   const [quantity, setQuantity] = useState(1);
 
   const renderItem = ({ item }) => (
-    <View style={styles.card}>
+    <Card containerStyle={styles.card}>
       <Image style={styles.image} source={item.image} />
-      <View style={styles.textContainer}>
-        <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.category}>{item.category}</Text>
-        <View style={styles.quantityContainer}>
-          <TextInput
-            style={styles.quantityInput}
-            value={quantity.toString()}
-            onChangeText={(text) => setQuantity(text)}
-            keyboardType="numeric"
-          />
-        </View>
-        <Text style={styles.price}>Price: ${item.price.toFixed(2)}</Text>
-        <Text style={styles.rating}>Rating: {item.rating}</Text>
-        <TouchableOpacity style={styles.buyButton}>
-          <Text style={styles.buyButtonText}>Buy Now</Text>
-        </TouchableOpacity>
+      <Text style={styles.name}>{item.name}</Text>
+      <Text style={styles.category}>{item.category}</Text>
+      <View style={styles.quantityContainer}>
+        <TextInput
+          style={styles.quantityInput}
+          value={quantity.toString()}
+          onChangeText={(text) => setQuantity(text)}
+          keyboardType="numeric"
+        />
       </View>
-    </View>
+      <Text style={styles.price}>Price: ${item.price.toFixed(2)}</Text>
+      <Text style={styles.rating}>Rating: {item.rating}</Text>
+      <Button
+        title="Buy Now"
+        buttonStyle={styles.buyButton}
+        titleStyle={styles.buyButtonText}
+        onPress={() => console.log('Buy Now pressed')}
+      />
+    </Card>
   );
 
   return (
@@ -54,35 +56,34 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
+    padding: 0,
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 8,
+    borderRadius: 12,
     marginBottom: 16,
+    elevation: 2, // Add shadow on Android
   },
   image: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
-    marginRight: 16,
-  },
-  textContainer: {
-    flex: 1,
+    width: '100%',
+    height: 150,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
   },
   name: {
     fontSize: 18,
     fontWeight: 'bold',
+    marginTop: 8,
+    marginLeft: 8,
   },
   category: {
     color: '#777',
     marginBottom: 8,
+    marginLeft: 8,
   },
   quantityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginLeft: 8,
   },
   quantityInput: {
     borderWidth: 1,
@@ -94,18 +95,18 @@ const styles = StyleSheet.create({
   },
   price: {
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginTop: 8,
+    marginLeft: 8,
   },
   rating: {
     color: '#888',
     marginBottom: 8,
+    marginLeft: 8,
   },
   buyButton: {
     backgroundColor: '#4CAF50',
-    padding: 12,
-    borderRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderRadius: 8,
+    marginTop: 8,
   },
   buyButtonText: {
     color: 'white',
