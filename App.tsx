@@ -1,7 +1,9 @@
 // App.js
 import React, { useState } from 'react';
-import { View, FlatList, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet, Dimensions } from 'react-native';
 import { Card, Image, Text, Button } from 'react-native-elements';
+
+const windowWidth = Dimensions.get('window').width;
 
 const groceryProducts = [
   { id: '1', name: 'Apples', category: 'Fruits', image: require('./assets/apple.jpg'), price: 2.99, rating: 4.5 },
@@ -12,39 +14,61 @@ const groceryProducts = [
   // Add more products as needed
 ];
 
-const App = () => {
+const GridItem = ({ item }) => {
   const [quantity, setQuantity] = useState(1);
 
-  const renderItem = ({ item }) => (
+  const decreaseQuantity = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  };
+
+  const increaseQuantity = () => {
+    setQuantity(quantity + 1);
+  };
+
+  return (
     <Card containerStyle={styles.card}>
       <Image style={styles.image} source={item.image} />
-      <Text style={styles.name}>{item.name}</Text>
-      <Text style={styles.category}>{item.category}</Text>
-      <View style={styles.quantityContainer}>
-        <TextInput
-          style={styles.quantityInput}
-          value={quantity.toString()}
-          onChangeText={(text) => setQuantity(text)}
-          keyboardType="numeric"
-        />
+      <View style={styles.textContainer}>
+        <Text style={styles.name}>{item.name}</Text>
+        <View style={styles.detailsContainer}>
+          <Text style={styles.price}>Price: ${item.price.toFixed(2)}</Text>
+          <Text style={styles.rating}>Rating: {item.rating}</Text>
+        </View>
+        <View style={styles.quantityContainer}>
+          <Button
+            title="-"
+            buttonStyle={styles.quantityButton}
+            onPress={decreaseQuantity}
+          />
+          <Text style={styles.quantityText}>{quantity}</Text>
+          <Button
+            title="+"
+            buttonStyle={styles.quantityButton}
+            onPress={increaseQuantity}
+          />
+        </View>
       </View>
-      <Text style={styles.price}>Price: ${item.price.toFixed(2)}</Text>
-      <Text style={styles.rating}>Rating: {item.rating}</Text>
       <Button
-        title="Buy Now"
+        title="Add to Cart"
         buttonStyle={styles.buyButton}
         titleStyle={styles.buyButtonText}
-        onPress={() => console.log('Buy Now pressed')}
+        onPress={() => console.log(`Added ${quantity} ${item.name} to cart`)}
       />
     </Card>
   );
+};
 
+const App = () => {
   return (
     <View style={styles.container}>
       <FlatList
         data={groceryProducts}
         keyExtractor={(item) => item.id}
-        renderItem={renderItem}
+        renderItem={({ item }) => <GridItem item={item} />}
+        numColumns={2}
+        contentContainerStyle={styles.flatListContainer}
       />
     </View>
   );
@@ -55,13 +79,16 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
+  flatListContainer: {
+    justifyContent: 'space-between',
+  },
   card: {
-    padding: 0,
+    width: (windowWidth - 40) / 2,
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 12,
+    elevation: 2,
     marginBottom: 16,
-    elevation: 2, // Add shadow on Android
   },
   image: {
     width: '100%',
@@ -69,39 +96,37 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
   },
+  textContainer: {
+    flex: 1,
+    padding: 8,
+  },
   name: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 8,
-    marginLeft: 8,
   },
-  category: {
-    color: '#777',
-    marginBottom: 8,
-    marginLeft: 8,
+  detailsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 8,
+  },
+  price: {
+    fontWeight: 'bold',
+  },
+  rating: {
+    color: '#888',
   },
   quantityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 8,
-  },
-  quantityInput: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-    padding: 8,
-    marginLeft: 8,
-    width: 40,
-  },
-  price: {
-    fontWeight: 'bold',
     marginTop: 8,
-    marginLeft: 8,
   },
-  rating: {
-    color: '#888',
-    marginBottom: 8,
-    marginLeft: 8,
+  quantityButton: {
+    backgroundColor: '#4CAF50',
+    borderRadius: 8,
+  },
+  quantityText: {
+    marginHorizontal: 8,
+    fontSize: 16,
   },
   buyButton: {
     backgroundColor: '#4CAF50',
